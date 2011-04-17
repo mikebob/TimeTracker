@@ -1,4 +1,5 @@
 source :rubygems 
 
 gem "sinatra"
-gem "haml"
+gem "datamapper"
+gem "do_sqlite3"
