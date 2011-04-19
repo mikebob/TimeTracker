@@ -1,8 +1,9 @@
 require 'rubygems'
 require 'sinatra'
 require 'data_mapper'
+require 'oa-oauth'
 #require 'sqlite3'
-#require 'dm-core'
+require 'dm-core'
 #require 'dm-timestamps'
 
 DataMapper.setup(:default, "sqlite3://#{Dir.pwd}/timetracker.db")
@@ -25,36 +26,88 @@ class Entry
 end
 
 class User
-
-	include DataMapper::Resource
-
-	property :id,	Serial
-	property :name,	String, :required => true
-
-	has n, :entries
-
+  include DataMapper::Resource
+  property :id,         Serial
+  property :uid,        String
+  property :name,       String
+  property :nickname,   String
+  property :created_at, DateTime
+  has n, :entries
 end
 
+
 class Task
-
 	include DataMapper::Resource
-
 	property :id,	Serial
 	property :name,	Text, :required => true
-
 	has n, :entries
-
 end
 
 #create / upgrade all tables
-#DataMapper.auto_upgrade!
-DataMapper.auto_migrate!
+DataMapper.finalize
+DataMapper.auto_upgrade!
+#DataMapper.auto_migrate!
 
-get '/' do
-	erb :fly
+# You'll need to customize the following line. Replace the CONSUMER_KEY and CONSUMER_SECRET with the values you got from Twitter (https://dev.twitter.com/apps/new).
+use OmniAuth::Strategies::Twitter, '0PrOlGbmCQiSpy0Gcv0LQ', '0zniWBw6kkzgEyRQV94JQBhSsanYaReC5w5LOJYgxc'
+
+enable :sessions
+
+helpers do
+  def current_user
+    @current_user ||= User.get(session[:user_id]) if session[:user_id]
+  end
 end
 
-__END__
+before do
 
-@@ fly
-anything goes
+	#@usr = current_user.name
+
+end
+
+get '/' do
+  if current_user
+	@usr = current_user.name
+	@whatsup = Task.all
+	erb :home
+  else
+    #'<a href="/sign_up">create an account</a> or <a href="/sign_in">sign in with Twitter</a>'
+    redirect '/auth/twitter'
+
+	#@whatsup = Task.all
+
+
+	erb :home
+  end
+end
+
+get '/auth/twitter/callback' do
+  auth = request.env["omniauth.auth"]
+  user = User.first_or_create({ :uid => auth["uid"]}, { :uid => auth["uid"], :nickname => auth["user_info"]["nickname"], :name => auth["user_info"]["name"], :created_at => Time.now })
+  session[:user_id] = user.id
+  redirect '/'
+end
+
+# any of the following routes should work to sign the user in: /sign_up, /signup, /sign_in, /signin, /log_in, /login
+["/sign_in/?", "/signin/?", "/log_in/?", "/login/?", "/sign_up/?", "/signup/?"].each do |path|
+  get path do
+    redirect '/auth/twitter'
+  end
+end
+
+# either /log_out, /logout, /sign_out, or /signout will end the session and log the user out
+["/sign_out/?", "/signout/?", "/log_out/?", "/logout/?"].each do |path|
+  get path do
+    session[:user_id] = nil
+    redirect '/'
+  end
+end
+
+=begin
+get '/' do
+
+	#Entry.create(:user_id => '100', :ticks => '1234', :task_id => '1')
+
+	erb :fly
+end
+=end
