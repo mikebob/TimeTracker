@@ -20,8 +20,8 @@ class Entry
 	property :create_date,	DateTime, :default => Time.now
 	property :update_date,	DateTime, :default => Time.now
 
-	#belongs_to :task
-	#belongs_to :user
+	belongs_to :task
+	belongs_to :user
 
 end
 
@@ -51,6 +51,7 @@ DataMapper.auto_upgrade!
 # You'll need to customize the following line. Replace the CONSUMER_KEY and CONSUMER_SECRET with the values you got from Twitter (https://dev.twitter.com/apps/new).
 use OmniAuth::Strategies::Twitter, '0PrOlGbmCQiSpy0Gcv0LQ', '0zniWBw6kkzgEyRQV94JQBhSsanYaReC5w5LOJYgxc'
 
+#enable cookie-based sessions
 enable :sessions
 
 helpers do
@@ -60,68 +61,42 @@ helpers do
 end
 
 before do
-
+	#DEBUGGING
 	puts '[Params]'
     p params
-
-	p params[:ticks]	
-
-
-	#@usr = current_user.name
-
+	#p params[:ticks]	
 end
+
+error do
+	
+end
+
 
 get '/' do
   if current_user
 	@usr = current_user.name
-	@whatsup = Task.all
+	@entries = Entry.all(:user_id => '10305162') 
 	erb :home
   else
     #'<a href="/sign_up">create an account</a> or <a href="/sign_in">sign in with Twitter</a>'
     redirect '/auth/twitter'
-
-	#@whatsup = Task.all
-
-
 	erb :home
   end
 end
 
 get '/create' do
-
-	#@entry = Entry.create(:user_id => 'str1', :ticks => 'str2', :task_id => 'str3', :note => 'str4')
-	#@entry.save
-
-
-	#@entry = Entry.new('str1', 'str2', 'str3', 'str4', Time.now, Time.now)
-	#@entry.save
-
-	#property :id,			Serial
-	#property :user_id,		String 
-	#property :ticks,		String
-	#property :task_id,		String
-	#property :note,			Text
-	#property :create_date,	DateTime, :default => Time.now
-	#property :update_date,	DateTime, :default => Time.now
-
-
-	
-
 	erb :create
-
 end
 
 post '/create' do
 
-	@entry = Entry.new(:user_id => params[:user_id], :ticks => params[:ticks], :task_id =>
+	@entry = Entry.new(:user_id => current_user.uid, :ticks => params[:ticks], :task_id =>
 params[:task_id], :note => params[:note])
 	@entry.save
 
 	redirect('/')
 
 end
-
-
 
 get '/auth/:name/callback' do
   auth = request.env["omniauth.auth"]
@@ -144,12 +119,3 @@ end
     redirect '/'
   end
 end
-
-=begin
-get '/' do
-
-	#Entry.create(:user_id => '100', :ticks => '1234', :task_id => '1')
-
-	erb :fly
-end
-=end

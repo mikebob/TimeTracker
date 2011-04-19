@@ -1,8 +1,18 @@
+<a href="/create">Create New</a>
+
 <table>
-<% @whatsup.each_with_index do |ad,i| %>
+
+<tr>
+	<th>ID</th>
+	<th>Duration</th>
+	<th>Note</th>
+</tr>
+
+<% @entries.each_with_index do |entry,i| %>
 	<tr<%= ' class="alt"' if i%2==0 %>>
-		<td><%= ad.id %></td>	  
-		<td><%= ad.name %></td>
+		<td><%= entry.id %></td>	  
+		<td><%= entry.ticks %></td>
+		<td><%= entry.note %></td>
 	</tr>
 <% end %>
 </table>

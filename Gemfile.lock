@@ -2,6 +2,7 @@ GEM
   remote: http://rubygems.org/
   specs:
     addressable (2.2.5)
+    configuration (1.2.0)
     data_objects (0.10.3)
       addressable (~> 2.1)
     dm-core (1.1.0)
@@ -20,6 +21,13 @@ GEM
       addressable (~> 2.2.4)
       multipart-post (~> 1.1.0)
       rack (>= 1.1.0, < 2)
+    heroku (1.20.1)
+      launchy (~> 0.3.2)
+      rest-client (>= 1.4.0, < 1.7.0)
+    launchy (0.3.7)
+      configuration (>= 0.0.5)
+      rake (>= 0.8.1)
+    mime-types (1.16)
     multi_json (0.0.5)
     multipart-post (1.1.0)
     nokogiri (1.4.4)
@@ -37,6 +45,9 @@ GEM
       faraday (~> 0.6.0)
       multi_json (~> 0.0.4)
     rack (1.2.2)
+    rake (0.8.7)
+    rest-client (1.6.1)
+      mime-types (>= 1.16)
     sinatra (1.2.3)
       rack (~> 1.1)
       tilt (< 2.0, >= 1.2.2)
@@ -50,5 +61,6 @@ DEPENDENCIES
   dm-migrations
   dm-sqlite-adapter
   do_sqlite3
+  heroku
   oa-oauth
   sinatra
