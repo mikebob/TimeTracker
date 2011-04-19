@@ -20,8 +20,8 @@ class Entry
 	property :create_date,	DateTime, :default => Time.now
 	property :update_date,	DateTime, :default => Time.now
 
-	belongs_to :task
-	belongs_to :user
+	#belongs_to :task
+	#belongs_to :user
 
 end
 
@@ -61,6 +61,12 @@ end
 
 before do
 
+	puts '[Params]'
+    p params
+
+	p params[:ticks]	
+
+
 	#@usr = current_user.name
 
 end
@@ -81,7 +87,43 @@ get '/' do
   end
 end
 
-get '/auth/twitter/callback' do
+get '/create' do
+
+	#@entry = Entry.create(:user_id => 'str1', :ticks => 'str2', :task_id => 'str3', :note => 'str4')
+	#@entry.save
+
+
+	#@entry = Entry.new('str1', 'str2', 'str3', 'str4', Time.now, Time.now)
+	#@entry.save
+
+	#property :id,			Serial
+	#property :user_id,		String 
+	#property :ticks,		String
+	#property :task_id,		String
+	#property :note,			Text
+	#property :create_date,	DateTime, :default => Time.now
+	#property :update_date,	DateTime, :default => Time.now
+
+
+	
+
+	erb :create
+
+end
+
+post '/create' do
+
+	@entry = Entry.new(:user_id => params[:user_id], :ticks => params[:ticks], :task_id =>
+params[:task_id], :note => params[:note])
+	@entry.save
+
+	redirect('/')
+
+end
+
+
+
+get '/auth/:name/callback' do
   auth = request.env["omniauth.auth"]
   user = User.first_or_create({ :uid => auth["uid"]}, { :uid => auth["uid"], :nickname => auth["user_info"]["nickname"], :name => auth["user_info"]["name"], :created_at => Time.now })
   session[:user_id] = user.id
