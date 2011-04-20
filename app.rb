@@ -68,14 +68,14 @@ before do
 end
 
 error do
-	
+	#handle errors	
 end
 
 
 get '/' do
   if current_user
 	@usr = current_user.name
-	@entries = Entry.all(:user_id => '10305162') 
+	@entries = Entry.all(:user_id => current_user.uid) 
 	erb :home
   else
     #'<a href="/sign_up">create an account</a> or <a href="/sign_in">sign in with Twitter</a>'
