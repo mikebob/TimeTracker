@@ -49,7 +49,7 @@ DataMapper.auto_upgrade!
 #DataMapper.auto_migrate!
 
 # You'll need to customize the following line. Replace the CONSUMER_KEY and CONSUMER_SECRET with the values you got from Twitter (https://dev.twitter.com/apps/new).
-use OmniAuth::Strategies::Twitter, '0PrOlGbmCQiSpy0Gcv0LQ', '0zniWBw6kkzgEyRQV94JQBhSsanYaReC5w5LOJYgxc'
+use OmniAuth::Strategies::Twitter, 'CONSUMER_KEY', 'CONSUMER_SECRET'
 
 #enable cookie-based sessions
 enable :sessions
